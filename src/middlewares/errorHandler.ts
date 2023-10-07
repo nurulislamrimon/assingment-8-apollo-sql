@@ -1,6 +1,8 @@
 import { ErrorRequestHandler, RequestHandler } from "express";
 import httpStatus from "http-status";
 import { IErrorMessage } from "../interfaces/error";
+import config from "../config/config";
+import handleValidationError from "../errors/handleValidationError";
 const routeNotFoundErrorHandler: RequestHandler = (req, res, next) => {
   res.status(httpStatus.NOT_FOUND).send({
     success: false,
@@ -18,7 +20,13 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   let statusCode = 500;
   let message = "Something went wrong!";
   let errorMessages: IErrorMessage[] = [];
-  if (error instanceof Error) {
+  let stack = config.env !== "Production" ? error.stack : undefined;
+  if (error.name === "PrismaClientValidationError") {
+    const simplifiedError = handleValidationError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
+  } else if (error instanceof Error) {
     message = error.message;
     errorMessages = error.message ? [{ path: "", message: error.message }] : [];
   }
@@ -26,6 +34,7 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     success: false,
     message,
     errorMessages,
+    stack,
   });
 };
 

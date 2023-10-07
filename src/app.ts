@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
+import router from "./routes/routes";
 
 const app: Application = express();
 
@@ -16,7 +17,7 @@ app.get("/", (req, res) => {
     data: "Welcome to book catallog server!",
   });
 });
-// app.use("/api/v1");
+app.use("/api/v1", router);
 
 // not found route error handler
 app.use(errorHandler.routeNotFoundErrorHandler);
