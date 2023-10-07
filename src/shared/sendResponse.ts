@@ -9,6 +9,7 @@ type IGenericApiResponse<T> = {
     limit: number;
     total: number;
   };
+  token?: string | null;
   data?: T | null;
 };
 const sendResponse = <T>(res: Response, data: IGenericApiResponse<T>) => {
@@ -17,6 +18,7 @@ const sendResponse = <T>(res: Response, data: IGenericApiResponse<T>) => {
     success: data.success,
     message: data.message || null,
     meta: data.meta || null || undefined,
+    token: data.token || null || undefined,
     data: data.data || null || undefined,
   };
   res.status(data.statusCode).send(responseData);
