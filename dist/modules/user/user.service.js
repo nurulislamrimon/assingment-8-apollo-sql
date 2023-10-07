@@ -12,23 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
-const config_1 = __importDefault(require("./config/config"));
-const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const server = app_1.default.listen(config_1.default.port, () => {
-        console.log(`server running at port: ${config_1.default.port}`);
+exports.userServices = void 0;
+const prisma_1 = __importDefault(require("../../shared/prisma"));
+const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield prisma_1.default.user.findMany({
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            contactNo: true,
+            address: true,
+            profileImg: true,
+        },
     });
-    // close server gracefully
-    const unexpectedErrorHandler = (error) => {
-        console.log(error);
-        if (server) {
-            server.close(() => {
-                console.log("server closed");
-            });
-        }
-        process.exit(1);
-    };
-    process.on("uncaughtException", unexpectedErrorHandler);
-    process.on("unhandledRejection", unexpectedErrorHandler);
+    return users;
 });
-run();
+exports.userServices = {
+    getAllUser,
+};

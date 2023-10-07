@@ -12,23 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
-const config_1 = __importDefault(require("./config/config"));
-const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const server = app_1.default.listen(config_1.default.port, () => {
-        console.log(`server running at port: ${config_1.default.port}`);
-    });
-    // close server gracefully
-    const unexpectedErrorHandler = (error) => {
-        console.log(error);
-        if (server) {
-            server.close(() => {
-                console.log("server closed");
-            });
+const apiError_1 = __importDefault(require("../errors/apiError"));
+const http_status_1 = __importDefault(require("http-status"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = __importDefault(require("../config/config"));
+const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = req.headers.authorization;
+        if (!token) {
+            throw new apiError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized!");
         }
-        process.exit(1);
-    };
-    process.on("uncaughtException", unexpectedErrorHandler);
-    process.on("unhandledRejection", unexpectedErrorHandler);
+        const verifiedUser = jsonwebtoken_1.default.verify(token, config_1.default.accessTokenSecret);
+        req.user = verifiedUser;
+        next();
+    }
+    catch (error) {
+        next(error);
+    }
 });
-run();
+exports.default = verifyToken;

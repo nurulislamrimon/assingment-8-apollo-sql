@@ -15,7 +15,69 @@ const getAllUser = async (): Promise<Partial<User>[]> => {
   });
   return users;
 };
+const getAUser = async (id: string): Promise<Partial<User> | null> => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      contactNo: true,
+      address: true,
+      profileImg: true,
+    },
+  });
+  return user;
+};
+const updateAUser = async (
+  id: string,
+  payload: Partial<User>
+): Promise<Partial<User> | null> => {
+  const user = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: payload,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      contactNo: true,
+      address: true,
+      profileImg: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return user;
+};
+const deleteAUser = async (id: string): Promise<Partial<User> | null> => {
+  const user = await prisma.user.delete({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      contactNo: true,
+      address: true,
+      profileImg: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return user;
+};
 
 export const userServices = {
   getAllUser,
+  getAUser,
+  updateAUser,
+  deleteAUser,
 };

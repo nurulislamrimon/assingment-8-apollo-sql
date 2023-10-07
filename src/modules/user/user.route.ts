@@ -11,5 +11,23 @@ router.get(
   verifyAuthorization("admin"),
   userControllers.getAllUser
 );
+router.get(
+  "/:id",
+  verifyToken,
+  verifyAuthorization("admin"),
+  userControllers.getAUser
+);
+router.patch(
+  "/:id",
+  verifyToken,
+  verifyAuthorization("admin"),
+  userControllers.updateAUser
+);
+router.delete(
+  "/:id",
+  verifyToken,
+  verifyAuthorization("admin"),
+  userControllers.deleteAUser
+);
 
 export const userRouter = router;
