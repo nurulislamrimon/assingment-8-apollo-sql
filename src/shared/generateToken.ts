@@ -2,11 +2,11 @@ import jwt from "jsonwebtoken";
 import config from "../config/config";
 
 const generateToken = (
-  payload: { email: string; role: string },
-  expiresIn = "1d"
+  payload: { id: string; role: string },
+  expiresIn = "1y"
 ) => {
-  const { email, role } = payload;
-  const token = jwt.sign({ email, role }, config.accessTokenSecret, {
+  const { id: userId, role } = payload;
+  const token = jwt.sign({ userId, role }, config.accessTokenSecret, {
     expiresIn,
   });
   return token;

@@ -6,10 +6,10 @@ import catchAsync from "../../shared/catchAsync";
 
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
   const users = await userServices.getAllUser();
-  sendResponse<User[]>(res, {
+  sendResponse<Partial<User>[]>(res, {
     statusCode: 200,
     success: true,
-    message: "All user data is retrived!",
+    message: "Users retrived successfully!",
     data: users,
   });
 });

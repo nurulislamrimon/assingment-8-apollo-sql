@@ -14,8 +14,8 @@ type IGenericApiResponse<T> = {
 };
 const sendResponse = <T>(res: Response, data: IGenericApiResponse<T>) => {
   const responseData: IGenericApiResponse<T> = {
-    statusCode: data.statusCode,
     success: data.success,
+    statusCode: data.statusCode,
     message: data.message || null,
     meta: data.meta || null || undefined,
     token: data.token || null || undefined,
