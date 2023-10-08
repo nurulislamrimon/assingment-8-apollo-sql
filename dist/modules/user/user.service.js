@@ -28,6 +28,65 @@ const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     return users;
 });
+const getAUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            contactNo: true,
+            address: true,
+            profileImg: true,
+        },
+    });
+    return user;
+});
+const updateAUser = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.update({
+        where: {
+            id,
+        },
+        data: payload,
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            contactNo: true,
+            address: true,
+            profileImg: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+    return user;
+});
+const deleteAUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.delete({
+        where: {
+            id,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            contactNo: true,
+            address: true,
+            profileImg: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+    return user;
+});
 exports.userServices = {
     getAllUser,
+    getAUser,
+    updateAUser,
+    deleteAUser,
 };
