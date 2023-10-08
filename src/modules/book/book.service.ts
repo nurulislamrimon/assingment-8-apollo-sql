@@ -1,9 +1,11 @@
-import { Book } from "@prisma/client";
+import { Book, Prisma } from "@prisma/client";
 import prisma from "../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { IBooksFilterableFields } from "./book.interfaces";
 import { IGenericResult } from "../../interfaces/genericResult";
 import { calculatedPagination } from "../../shared/calculatedPagination";
+import { organizeSearchAndFilter } from "../../shared/organizeSearchAndFilter";
+import { bookFilterableFields, bookSearchableFields } from "./book.constants";
 
 const createBook = async (payload: Book): Promise<Book> => {
   const book = await prisma.book.create({ data: payload });
@@ -14,15 +16,24 @@ const getAllBooks = async (
   filters: IBooksFilterableFields,
   options: IPaginationOptions
 ): Promise<IGenericResult<Book[]> | null> => {
-  console.log(filters, options);
+  const calculatedPaginationOptions = calculatedPagination(options);
 
-  const books = await prisma.book.findMany({});
+  const whereCondition: Prisma.BookWhereInput = organizeSearchAndFilter(
+    filters,
+    bookSearchableFields,
+    bookFilterableFields
+  );
+
+  const books = await prisma.book.findMany({ where: whereCondition });
+  const total = await prisma.book.count({ where: whereCondition });
+
+  const totalPage = Math.ceil(total / calculatedPaginationOptions.size);
   return {
     meta: {
-      page: 1,
-      size: 10,
-      total: 63,
-      totalPage: 7,
+      page: calculatedPaginationOptions.page,
+      size: calculatedPaginationOptions.size,
+      total,
+      totalPage,
     },
     data: books,
   };
